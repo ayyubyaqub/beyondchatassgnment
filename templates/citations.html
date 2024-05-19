@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citations</title>
+</head>
+<body>
+    <h1>Citations</h1>
+    <div id="citations-container"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/citations/fetch-citations/')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('citations-container');
+                    data.forEach(item => {
+                        const responseText = document.createElement('h2');
+                        responseText.innerText = item.response;
+                        container.appendChild(responseText);
+
+                        const sourcesList = document.createElement('ul');
+                        item.citations.forEach(source => {
+                            const listItem = document.createElement('li');
+                            listItem.innerText = `ID: ${source.id}, Context: ${source.context}`;
+                            if (source.link) {
+                                const link = document.createElement('a');
+                                link.href = source.link;
+                                link.innerText = ' [Link]';
+                                listItem.appendChild(link);
+                            }
+                            sourcesList.appendChild(listItem);
+                        });
+                        container.appendChild(sourcesList);
+                    });
+                })
+                .catch(error => console.error('Error fetching citations:', error));
+        });
+    </script>
+</body>
+</html>
